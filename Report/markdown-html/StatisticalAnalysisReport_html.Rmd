@@ -1,0 +1,103 @@
+---
+title: " Long Project title"
+author: "Name"
+date:  "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  bookdown::html_document2: 
+    toc: TRUE
+    toc_float: TRUE
+    number_sections: true
+    self_contained: yes
+    css: hmri-style.css
+      
+  
+      
+     
+    
+
+---
+
+<script>
+  $(document).ready(function() {
+    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"hmri.png"></div>');
+  });
+</script>
+
+<style>
+#nav_logo {
+  width: 90%;
+  margin-top: 20px;
+}
+</style>
+
+
+<div class="watermark">DRAFT</div>
+
+
+
+
+```{r, include=FALSE}
+
+library(tidyverse)
+library(here)
+library(tableone)
+library(kableExtra)
+
+kableone <- function(x, ...) {
+  capture.output(x <- print(x))
+  knitr::kable(x, ...)
+}
+
+```
+
+
+
+
+# Introduction
+
+ 
+
+
+
+
+# Statistical analysis methods
+
+
+# Results
+
+
+There were 85 surveys completed, the responses are summarised in \@ref(tab:completed)
+
+```{r completed, echo=TRUE}
+#u.dat <- readRDS()
+
+
+#tab <- CreateTableOne(vars = c("age","gender","primary_chronic"), strata = c("lhd"), data = u.dat,
+#                      factorVars = c("gender","primary_chronic"))
+
+
+#tmp<-print(tab,dropEqual = TRUE,  printToggle = FALSE)
+
+#  knitr::kable(tmp, caption = "Characteristics of patients ") %>%
+#       add_indent(c(5:12))
+
+
+```
+
+
+
+
+# Discussion
+
+
+
+# Appendix
+
+```{r, echo=FALSE}
+
+pander::pander(sessionInfo(), compact = FALSE)
+
+```
+
+
+

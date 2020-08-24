@@ -1,0 +1,65 @@
+---
+title: "Statistical Analysis Programs: CRE19282"
+author: "Chris Oldmeadow"
+date: "`r Sys.Date()`"
+
+output: html_document
+
+---
+
+```{r, echo = TRUE, warnings = FALSE}
+library(tidyverse)
+library(knitr)
+library(finalfit) # demo macro equiv, and much much more
+library(here)
+```
+
+## Results: bivariate comparisons, factors associated with a positive culture within first 90 days
+```{r, warning = FALSE, echo = TRUE, message = FALSE}
+adat <- readRDS(here("Data", "analysis.Rds"))
+response <- "positive_culture_in_first_90_days"
+explanatory <- c("sex", "age_at_insertion_years", 
+ "diagnosis",  
+ "initial_dx_or_relapse", "wcc_at_dx", "anc_at_dx", 
+ "plt_at_dx", "peripheral_blasts", "initial_or_replacement", 
+ "bmi", "inpatient_days_prior_to_insertion", 
+ "no_of_steroid_days_prior_to_insertion", "chemo_prior_to_insertion", 
+ "fever_7_days_prior_to_insertion", "antibiotics_7_days_prior_to_insertion", 
+ "no_day_from_dx_to_cvl_insertion", "wash_pre_op", "skin_prep", 
+ "ot_antibiotic_prophylaxis",  "venous_site", 
+ "laterality",
+ "surgeon"
+#"type_of_line" 
+)
+
+adat %>%
+	summary_factorlist(response,
+			   explanatory,
+	p = TRUE,
+	column = FALSE,
+	add_dependent_label = TRUE,
+        na_include = TRUE,
+	add_col_totals = TRUE) -> table1
+	#finalfit(response,explanatory)
+knitr::kable(table1, row.names=FALSE, 
+	         align=c("l", "l", "r", "r", "r", "r"))
+```
+
+
+```{r, warning = FALSE, message = FALSE}
+explanatory <- c("age_at_insertion_years", 
+ "diagnosis",  
+ "wcc_at_dx",  
+ "ln_plt_dx", "peripheral_blasts", 
+ "fever_7_days_prior_to_insertion", "antibiotics_7_days_prior_to_insertion" 
+#"type_of_line" 
+)
+
+adat %>% 
+	finalfit(response,
+		 explanatory,
+		 metrics = TRUE) -> tab
+knitr::kable(tab, row.names=FALSE) 
+
+```
+

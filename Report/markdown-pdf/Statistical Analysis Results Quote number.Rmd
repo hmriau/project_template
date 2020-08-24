@@ -1,0 +1,57 @@
+---
+title: "Big Toe Research Project"
+author: "Chris Oldmeadow"
+client: "Client Name"
+quote: "12345"
+dir:  "/ /Project/Directory"
+geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
+
+
+output: 
+    bookdown::pdf_document2:
+      df_print: "kable"
+      toc: TRUE
+      template: StatisticalAnalysisReportTemplate.tex
+    
+
+---
+
+# About
+
+
+This template is similar to the `03: My Template (HTML edit)`, but instead applies a custom LaTeX template. This is used to build the final output.
+
+
+- this is 
+- a 
+- list
+  - with sub items
+
+# Introduction
+
+
+
+# Results
+
+```{r }
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+# Discussion
+
+
+# Session Info
+
+```{r, echo = FALSE}
+sessionInfo()
+```
