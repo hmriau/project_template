@@ -9,10 +9,7 @@ output:
     number_sections: true
     self_contained: yes
     css: hmri-style.css
-      
-  
-      
-     
+    code_folding: hide  
     
 
 ---
@@ -36,17 +33,21 @@ output:
 
 
 
-```{r, include=FALSE}
+```{r, include = FALSE}
 
 library(tidyverse)
 library(here)
-library(tableone)
 library(kableExtra)
-
-kableone <- function(x, ...) {
-  capture.output(x <- print(x))
-  knitr::kable(x, ...)
-}
+require(Hmisc)
+knitrSet(lang='markdown', h=4.5, fig.path='png/', fig.align='left',
+         capfile='captions.md')  # + sometimes ,cache=TRUE
+# knitrSet redirects all messages to messages.txt
+options(grType='plotly') # for certain graphics functions
+mu <- markupSpecs$html   # markupSpecs is in Hmisc
+cap  <- mu$cap           # function to output html caption
+lcap <- mu$lcap          # for continuation for long caption
+# These last 2 functions are used by the putHfig function in Hmisc
+cat('', file='captions.md')   # initialize table of short captions
 
 ```
 
@@ -55,33 +56,167 @@ kableone <- function(x, ...) {
 
 # Introduction
 
- 
+
+
+## Using the Hmisc library
+
+```{r metadata,results='asis'}
+getHdata(pbc)
+
+# Have upData move units from labels to separate attribute
+pbc <- upData(pbc,
+              fu.yrs = fu.days / 365.25,
+              labels = c(fu.yrs = 'Follow-up Time',
+                         status = 'Death or Liver Transplantation'),
+              units = c(fu.yrs = 'year'),
+              drop  = 'fu.days',
+              moveUnits=TRUE, html=TRUE)
+# The following can also be done by running this command
+# to put the results in a new browser tab:
+# getHdata(pbc, 'contents')
+html(contents(pbc), maxlevels=10, levelType='table')
+```
+
+
+```{r describe,results='asis'}
+# did have results='asis' above
+d <- describe(pbc)
+html(d, size=80, scroll=TRUE)
+
+# prList is in Hmisc; useful for plotting or printing a list of objects
+# Can just use plot(d) if don't care about the mess
+# If using html output these 2 images would not be rendered no matter what
+p <- plot(d)
+# The option htmlfig=2 causes markupSpecs$html$cap() to be used to
+# HTML-typeset as a figure caption and to put the sub-sub section
+# marker ### in front of the caption.  htmlfig is the only reason
+# results='asis' was needed in the chunk header
+# We define a long caption for one of the plots, which does not appear
+# in the table of contents
+# prList works for html notebooks but not html documents
+# prList(p, lcap=c('', 'These are spike histograms'), htmlfig=2)
+```
+
+
+```{r plotlym,cap='This used the <code>htmltools tagList</code> function.',scap='Two <code>plotly</code> graphics combined into one'}
+htmltools::tagList(p)    # lapply(p, plotly::as.widget)
+```
 
 
 
+```{r summaryM,cap=paste('Proportions and', mu$chisq(), 'tests for categorical variables')}
+s <- summaryM(bili + albumin + stage + protime + sex + age + spiders +
+              alk.phos + sgot + chol ~ drug, data=pbc,
+							overall=FALSE, test=TRUE)
+plot(s, which='categorical')
+```
 
+
+```{r summaryM2,results='asis',cap='Extended box plots for the first 4 continuous variables'}
+plot(s, which='continuous', vars=1 : 4)
+```
+
+```{r summaryM3,cap='Extended box plots for the remaining continuous variables'}
+plot(s, which='continuous', vars=5 : 7)
+```
+
+```{r summaryM4}
+html(s, caption='Baseline characteristics by randomized treatment',
+     exclude1=TRUE, npct='both', digits=3, middle.bold=TRUE,
+     prmsd=TRUE, brmsd=TRUE, msdsize=mu$smaller2)
+```
 # Statistical analysis methods
 
 
 # Results
 
 
-There were 85 surveys completed, the responses are summarised in \@ref(tab:completed)
+## Using the rms library for regression models
 
-```{r completed, echo=TRUE}
-#u.dat <- readRDS()
-
-
-#tab <- CreateTableOne(vars = c("age","gender","primary_chronic"), strata = c("lhd"), data = u.dat,
-#                      factorVars = c("gender","primary_chronic"))
-
-
-#tmp<-print(tab,dropEqual = TRUE,  printToggle = FALSE)
-
-#  knitr::kable(tmp, caption = "Characteristics of patients ") %>%
-#       add_indent(c(5:12))
+```{r}
+require(rms)
+getHdata(lead)
+# Subset variables just so contents() and describe() output is short
+# Override units of measurement to make them legal R expressions
+lead <- upData(lead,
+               keep=c('ld72', 'ld73', 'age', 'maxfwt'),
+               labels=c(age='Age'),
+               units=c(age='years', ld72='mg/100*ml', ld73='mg/100*ml'))
 
 
+```
+
+
+To use Predict, summary, or nomogram in the rms package, you need to let rms first compute summaries of the distributional characteristics of the predictors
+
+```{r}
+dd <- datadist(lead); options(datadist='dd')
+dd    # show what datadist computed
+```
+
+
+Fit an ordinary least squares regrssion model
+
+```{r}
+# Fit an ordinary linear regression model with 3 predictors assumed linear
+f <- ols(maxfwt ~ age + ld72 + ld73, data=lead)
+
+f$coef
+```
+
+
+Unofrtunately, as far as I can tell there is no nice way to display the
+regression table in HTML. This oucld be done manually
+
+beta = coef(olsfit).
+se =  sqrt(diag(vcov(olsfit)))
+p = 1 - pchisq(Z^2, 1)  
+
+To get t-statistic pvalues need to know the df ...
+Z <- beta/se
+p = 2 * (1 - pt(abs(Z), errordf))
+
+
+Another approach is to use print.capture see https://stackoverflow.com/questions/47724189/extract-all-model-statistics-from-rms-fits
+
+
+```{r}
+#parser
+get_model_stats = function(x) {
+  cap = capture.output(print(x))
+
+  #model stats
+  stats = c()
+  stats$R2.adj = str_match(cap, "R2 adj\\s+ (\\d\\.\\d+)") %>% na.omit() %>% .[, 2] %>% as.numeric()
+
+  #coef stats lines
+  coef_lines = cap[which(str_detect(cap, "Coef\\s+S\\.E\\.")):(length(cap) - 1)]
+
+  #parse
+  coef_lines_table = suppressWarnings(readr::read_table(coef_lines %>% stringr::str_c(collapse = "\n")))
+  colnames(coef_lines_table)[1] = "Predictor"
+
+  list(
+    stats = stats,
+    coefs = coef_lines_table
+  )
+}
+
+
+get_model_stats(f)
+```
+
+
+Residual plots:
+
+```{r}
+r <- resid(f)
+par(mfrow=c(2,2))   # 2x2 matrix of plots
+plot(fitted(f), r); abline(h=0)  # yhat vs. r
+with(lead, plot(age,  r));    abline(h=0)
+with(lead, plot(ld73, r));    abline(h=0)
+qqnorm(r)           # linearity indicates normality
+qqline(as.numeric(r))
 ```
 
 
