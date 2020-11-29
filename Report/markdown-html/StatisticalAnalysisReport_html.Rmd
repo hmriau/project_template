@@ -60,6 +60,15 @@ cat('', file='captions.md')   # initialize table of short captions
 
 ## Using the Hmisc library
 
+
+The Hmis library has several useful fuinctions for reading and anotating
+datasets, including labels and units. There is also a useful html integration
+for some of hte commands. 
+
+In the below code, the upData command is used to create a new variable as well
+as labels and units. A data dictionary printout is also given in html format
+wiht the html and contents commands.
+
 ```{r metadata,results='asis'}
 getHdata(pbc)
 
@@ -76,6 +85,10 @@ pbc <- upData(pbc,
 # getHdata(pbc, 'contents')
 html(contents(pbc), maxlevels=10, levelType='table')
 ```
+
+There are also useful descriptive statistics functions, for unstratified, and
+stratified summaries of the data. The describe and summaryM functions have great
+tabular reporting outputs, as well as informative plots. Some examples below
 
 
 ```{r describe,results='asis'}
