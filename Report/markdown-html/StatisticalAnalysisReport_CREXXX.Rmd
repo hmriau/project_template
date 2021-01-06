@@ -61,7 +61,7 @@ cat('', file='captions.md')   # initialize table of short captions
 ## Using the Hmisc library
 
 
-The Hmis library has several useful fuinctions for reading and anotating
+The Hmisc library has several useful fuinctions for reading and anotating
 datasets, including labels and units. There is also a useful html integration
 for some of hte commands. 
 
@@ -131,6 +131,7 @@ plot(s, which='continuous', vars=1 : 4)
 
 ```{r summaryM3,cap='Extended box plots for the remaining continuous variables'}
 plot(s, which='continuous', vars=5 : 7)
+
 ```
 
 ```{r summaryM4}
@@ -178,8 +179,9 @@ f$coef
 ```
 
 
-Unofrtunately, as far as I can tell there is no nice way to display the
-regression table in HTML. This oucld be done manually
+Unfortunately, as far as I can tell there is no nice way to display the
+regression table in HTML. This could be done manually
+
 
 beta = coef(olsfit).
 se =  sqrt(diag(vcov(olsfit)))

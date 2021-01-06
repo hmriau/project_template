@@ -32,94 +32,18 @@ library(here) # reproducable directories
 
 
 ```{r}
-dat <- read_excel(here("Data",
-		       "Current Audit Data 16.03.20 - HMRI.01.20.xlsx"))
 ```
 
 
 
 
-```{r labels}
-adat <- dat %>%
-	janitor::clean_names() %>%
-	select(-notes)
-
-adat  <-  adat %>%
-	mutate(sex = factor(sex, levels = c(0, 1), labels = c("Male", "Female")),
-	       diagnosis = factor(diagnosis, levels = c(0,1), labels = c("Liquid","Solid")),
-	       initial_dx_or_relapse = factor(initial_dx_or_relapse, levels = c(0,1), labels =  c("initial","relapse")),
-	       initial_or_replacement = factor(initial_or_replacement, levels = c(0,1), labels = c("initial","replacement")),
-               chemo_prior_to_insertion = factor(chemo_prior_to_insertion, levels = c(0,1), labels = c("no","yes")),
-               type_of_skin_prep_used_in_ot = factor(type_of_skin_prep_used_in_ot, levels = c(0,1,2,3,4,5), labels = c("Chlorhexidine","Chlorhexidine + Alcohol", "Betadine", "betadine + alcohol", "chlorhexidine + cetrimide", "not specified")),
-	       ot_antibiotic_prophylaxis = factor(ot_antibiotic_prophylaxis, levels = c(0,1,2,3), labels = c("no", "yes", "on regular IVABs", "not recorded")),
-               antibiotic_type = factor(antibiotic_type, levels  = c(0,1,2,3,4,5), labels = c("no antibiotics", "other", "cefazolin", "flucloxacillin", "tazocin", "flucloxacillin + gentamicin" )),
-               venous_site = factor(venous_site, levels = c(1,2,3,4,5), labels = c("internal jugular", "other", "external jugular",  "Cephalic", "other")),
-               laterality = factor(laterality, levels = c(1,2,3), labels =  c("left", "right", "not available")),
-               type_of_line = factor(type_of_line, levels = c(0,2,3), labels = c("Port", "External tunnelled", "Other")),
-	       fever_7_days_prior_to_insertion = factor(fever_7_days_prior_to_insertion, levels = c(0,1), labels = c("no","yes")),
-	       antibiotics_7_days_prior_to_insertion = factor(antibiotics_7_days_prior_to_insertion, levels = c(0,1), labels = c("no","yes")),
-               wash_pre_op = factor(wash_pre_op, levels = c(0,1,2), labels = c("no","yes","not recorded")), 
-               positive_culture_in_first_90_days = factor(positive_culture_in_first_90_days, levels = c(0,1), labels = c("no", "yes"))) 
 
 
 
-adat <- adat %>%
-	mutate(skin_prep = fct_collapse(as.character(as.numeric(type_of_skin_prep_used_in_ot)), "Chlorhexadine solution" = c("0","1","4"), 
-							"Betadine solution" = c("2","3"), 
-							"Not specified" = c("5","6")),
-	       wash_pre_op = fct_recode(wash_pre_op, NULL = "not recorded"),
-	       laterality = fct_recode(laterality, NULL = "not available"),
-	       skin_prep = fct_recode(skin_prep, NULL = "Not specified"),
-	       ot_antibiotic_prophylaxis = fct_recode(ot_antibiotic_prophylaxis, NULL = "not recorded"),
-	       surgeon = factor(surgeon),
-	ln_plt_dx = log(plt_at_dx))
-```
 
-
-There are many variables in this data set, with a mixture of numeric, character and date types as well. There are quite a few variables that aren't of interest statistically so these will be dropped from analyses. The following section specifies the numeric and character variables that we will restrict attention to.
-
-
-```{r selecting}
-
-vtypes <- as.data.frame(sapply(adat, class))
-contvars <-rownames(vtypes[vtypes[,1]=="numeric",])
-catvars <-rownames(vtypes[vtypes[,1]=="factor",])
-
-#dput(contvars)
- contvars <- c(  "age_at_insertion_years",
-  "wcc_at_dx", "anc_at_dx", "plt_at_dx", "peripheral_blasts",
- "weight_kg_at_insertion", "height_m_at_insertion", "bmi", "inpatient_days_prior_to_insertion",
- "no_of_steroid_days_prior_to_insertion",  "no_day_from_dx_to_cvl_insertion",
- "wash_pre_op")
-
-
-
-#dput(catvars)
- cvars_short <- c("sex", "diagnosis", "sub_classification_of_diagnosis", "initial_dx_or_relapse",
- "initial_or_replacement", "chemo_prior_to_insertion", "type_of_skin_prep_used_in_ot",
- "ot_antibiotic_prophylaxis", "antibiotic_type", "venous_site",
- "laterality", "type_of_line", "positive_culture_in_first_90_days"
- )
-
-
-```
 
 # Summaries of the data
 
-We can see summary statistics of each of the variables of interest to try and identify any errors or unusual values.
-
-```{r}
-adat %>%
-	select(one_of(c(cvars_short,contvars))) %>%
-	skim()
-
-```
-
-
-
-
-
-```
 
 # Notes from the data summaries
 
@@ -129,10 +53,6 @@ div.blue { background-color:#e6f0ff; border-radius: 5px; padding: 20px;}
 <div class = "blue">
 
 In summary:
-
-- There are `r length(unique(adat$id))` unique patients from `r nrow(adat)` observations
-- There are no completely duplicated rows in the data
-- White cell count, ANC and platelettes are very skewed and should be checked for errors, and summarised using medians/interquartile ranges
 
 </div>
 
