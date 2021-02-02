@@ -1,11 +1,23 @@
 ---
-title: "Statistical Analysis Programs: CRE19282"
+title: "Data management report"
 author: "Chris Oldmeadow"
 date: "`r Sys.Date()`"
 
-output: html_document
-
+output:
+  html_notebook:
+    toc: yes
+    toc_float: yes
+    code_folding: hide
+    fig_caption: yes
 ---
+
+  ------------------  -------------------------------------------------------------------
+        **Project:**  Statistical Analysis Programs
+     **Project ID:**  \bgroup\color{blue}CREXXXXXX\egroup
+          **CI(s):**  CI Name
+  ------------------  -------------------------------------------------------------------
+
+
 
 ```{r, echo = TRUE, warnings = FALSE}
 library(tidyverse)
