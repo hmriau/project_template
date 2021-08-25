@@ -14,18 +14,10 @@ output:
 
 ---
 
-<script>
-  $(document).ready(function() {
-    $('#TOC').parent().prepend('<div id=\"nav_logo\"><img src=\"hmri.png"></div>');
-  });
-</script>
-
-<style>
-#nav_logo {
-  width: 90%;
-  margin-top: 20px;
-}
-</style>
+```{r, results='asis', echo=FALSE}
+#sidebar with embedded logo as base64
+cat(readLines('logo_sidebar.html'))
+```
 
 
 <div class="watermark">DRAFT</div>
