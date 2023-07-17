@@ -1,0 +1,66 @@
+---
+title: "Report Title"
+subtitle: "Report subtitle"
+author: "Name and Surname"
+date: last-modified
+date-format: "DD-MM-YYYY"
+description: "HMRI Data Sciences || Biostatistics Quote Number: "
+title-block-banner: true
+format: 
+  html:
+    embed-resources: true
+    smooth-scroll: true
+    theme: cosmo
+    fontcolor: black
+    toc: true
+    toc-location: left
+    toc-title: Summary
+    toc-depth: 3
+css: hmri-style.css
+---
+
+  
+
+
+
+
+
+## About
+
+
+This template is similar to the `03: My Template (HTML edit)`, but instead applies a custom LaTeX template. This is used to build the final output.
+
+
+- this is 
+- a 
+- list
+  - with sub items
+
+## Introduction
+
+
+
+## Results
+
+```{r }
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+## Discussion
+
+
+## Session Info
+
+```{r, echo = FALSE}
+sessionInfo()
+```
