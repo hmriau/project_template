@@ -28,7 +28,7 @@ css: hmri-style.css
 ## About
 
 
-This template is similar to the `03: My Template (HTML edit)`, but instead applies a custom LaTeX template. This is used to build the final output.
+This template is similar to the `03: My Template (HTML edit)`, but instead applies a custom css style. This is used to build the final output.
 
 
 - this is 
